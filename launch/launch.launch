@@ -2,6 +2,7 @@
   <!-- Create an argument to determine whether to use a XACRO or URDF file. -->
   <arg name="use_xacro" default="false" />
   <arg name="use_gui" default="true" />
+  <arg name="use_robot_state_publisher" default="true" />
   
   
   <!-- The filename can be passed into the launch file to override the default. -->
@@ -27,9 +28,12 @@ name="joint_state_publisher_gui"/>
 name="joint_state_publisher"/>
   
   <!-- Run the robot_state_publisher. -->
-  <node pkg="robot_state_publisher" type="robot_state_publisher"
-name="robot_state_publisher" />
-  
+  <node if="$(arg use_robot_state_publisher)" pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" />
+  <node unless="$(arg use_robot_state_publisher)" pkg="tf" type="static_transform_publisher" name="base_left_wheel_joint" args="-0.10 0.4 0.0 -1.57079632679 0.0 0.0 base left_wheel 100" />
+  <node unless="$(arg use_robot_state_publisher)" pkg="tf" type="static_transform_publisher" name="base_right_wheel_joint" args="-0.10 -0.4 0.0 -1.57079632679 0.0 0.0 base right_wheel 100" />
+  <node unless="$(arg use_robot_state_publisher)" pkg="tf" type="static_transform_publisher" name="base_center_wheel_joint" args="0.10 0.0 0.0 -1.57079632679 0.0 0.0 base center_wheel 100" />
+  <node unless="$(arg use_robot_state_publisher)" pkg="tf" type="static_transform_publisher" name="base_link_to_base_joint" args="0.07 0 1.792 0.0 3.14159 0.0 base_link base 100" />
+  <node unless="$(arg use_robot_state_publisher)" pkg="tf" type="static_transform_publisher" name="base_link_to_imu_joint" args="0.0 0.0 0.0 3.1405788 0.0034281 3.1382064 base_link imu 100" />
   
   <!-- Run RVIZ with a configuration file.  If RVIZ is closed, close everything. -->
   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find
